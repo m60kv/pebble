@@ -1,0 +1,135 @@
+/** Shopify CDN: Minification failed
+
+Line 16:0 Transforming class syntax to the configured target environment ("es5") is not supported yet
+Line 17:13 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 37:4 Transforming let to the configured target environment ("es5") is not supported yet
+Line 38:4 Transforming let to the configured target environment ("es5") is not supported yet
+Line 39:6 Transforming let to the configured target environment ("es5") is not supported yet
+Line 52:4 Transforming const to the configured target environment ("es5") is not supported yet
+Line 53:4 Transforming const to the configured target environment ("es5") is not supported yet
+Line 62:0 Transforming class syntax to the configured target environment ("es5") is not supported yet
+Line 63:13 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 72:4 Transforming let to the configured target environment ("es5") is not supported yet
+... and 9 more hidden warnings
+
+**/
+class Product {
+  constructor() {
+    // this.buyNowBtnText();
+    // document.addEventListener('variant:change', () => {
+    //   let buyBtns = document.querySelectorAll('.paymentBtnWrapper button');
+    //   buyBtns.forEach(btn => {
+    //     btn.style.opacity = 0;
+    //     setTimeout(() => {
+    //       if (btn.textContent == 'Buy it now') {
+    //         btn.textContent = 'Buy Now'
+    //         btn.style.opacity = null
+    //       }
+    //     }, 550)
+    //   })
+    // });
+    if (window.innerWidth <= 749) {
+      this.VariantOptOnMobile();
+    }
+  }
+  
+  buyNowBtnText = () => {
+    let buyBtnWrapper = document.querySelector('.paymentBtnWrapper');
+    let buyBtnObserver = new MutationObserver(() => {
+      let buyBtns = document.querySelectorAll('.paymentBtnWrapper button');
+      buyBtns.forEach(btn => {
+        setTimeout(() => {
+          if (btn.textContent == 'Buy it now') {
+            btn.textContent = 'Buy Now'
+          }
+        }, 200);
+      });
+    });
+    buyBtnObserver.observe(buyBtnWrapper, {subtree: true, childList: true});
+  }
+
+  VariantOptOnMobile = () => {
+    const varBtnEle = document.querySelector('.main-product-section variant-radios');
+    const PdpGridWrapper = document.querySelector('.main-product-section .product__info-container');
+    if(varBtnEle) {
+     PdpGridWrapper.insertAdjacentElement("afterbegin",varBtnEle) 
+    }
+  }
+
+}
+new Product;
+
+class pdpStripline extends HTMLElement {
+  constructor() {
+    super();
+    this.onscrollStrip();  
+    this.onclickStrip();
+    this.backToTop();
+    this.removeBlankLinks();
+  }
+
+  removeBlankLinks = () => {
+    let aplusContent = document.querySelector('.a-plus-content-section'),
+        heroVideo = document.querySelector('#aPlusVideoSection'),
+        specification = document.querySelector('.collapsible-content-section'),
+        faqs = document.querySelector('.faqs-section'),
+        reviews = document.querySelector('#shopify-section-template--15017240166443__loox-product-reviews-app-section');
+    let overviewBtn = document.querySelector('#overview'),
+        specificationsBtn = document.querySelector('#specifications'),
+        faqsBtn = document.querySelector('#faqs'),
+        reviewsBtn = document.querySelector('#reviews');
+        if (window.getComputedStyle(aplusContent).display === "none" && window.getComputedStyle(heroVideo).display === "none") {
+          overviewBtn.style.display = 'none'
+          overviewBtn.classList.add('hidden');
+        }
+        if(window.getComputedStyle(specification).display === "none") {
+          specificationsBtn.style.display = 'none'
+          specificationsBtn.classList.add('hidden');
+        }
+        if(window.getComputedStyle(faqs).display === "none") {
+          faqsBtn.style.display = 'none'
+          faqsBtn.classList.add('hidden');
+        }
+        if(window.getComputedStyle(reviews).display === "none") {
+          reviewsBtn.style.display = 'none'
+          reviewsBtn.classList.add('hidden');
+        }
+  }
+
+  backToTop = () => {
+    let trigger = this.querySelector('#backToTop');
+    trigger.addEventListener('click', () => {
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    })
+  }
+
+  onscrollStrip = () => {
+    window.addEventListener('scroll', () => {
+      let crollPosition = window.pageYOffset;
+      let positionEle = this.querySelectorAll('.strip-item:not(.hidden)');
+      positionEle.forEach(ele => {
+        let id = ele.getAttribute('href');
+        let offset = document.querySelector(id).offsetTop - 80; 
+        if (crollPosition >= offset) {
+          positionEle.forEach(btns => btns.classList.remove('active'))
+          ele.classList.add('active')
+        }
+      })
+    }),{passive: true}
+  }
+
+  onclickStrip = () => {
+    let btns = this.querySelectorAll('.strip-item');
+    btns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        let id = e.currentTarget.getAttribute('href');
+        let offset = document.querySelector(id).offsetTop - 50; 
+        btns.forEach(btn => btn.classList.remove('active'))
+        e.currentTarget.classList.add('active');
+        window.scrollTo({top: offset, behavior: 'smooth'});
+      })
+    })
+  }
+}
+customElements.define('pdp-stripline', pdpStripline);

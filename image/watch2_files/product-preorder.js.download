@@ -1,0 +1,35 @@
+/** Shopify CDN: Minification failed
+
+Line 10:4 Transforming let to the configured target environment ("es5") is not supported yet
+Line 19:4 Transforming let to the configured target environment ("es5") is not supported yet
+
+**/
+window.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('preorder_var:change', (vardata) => {
+    var id = vardata.detail.variant.id;
+    let atcBtns = document.querySelectorAll('.product-form__submit[type="submit"]');
+    atcBtns.forEach(btn => {
+      if (product_json[id] == "continue") {
+        btn.setAttribute('data-pre-order','true');
+      } else {
+        btn.setAttribute('data-pre-order','false');
+      }
+    })
+
+    let preOrderBtns = document.querySelectorAll('[data-ispreorder]');
+    if (preOrderBtns) {
+      preOrderBtns.forEach(btn => {
+        if(vardata.detail.variant.available) {
+          btn.textContent = 'Pre-Order';
+          btn.type = "submit";
+          btn.removeAttribute('disabled')
+        }else {
+          btn.textContent = 'Sold Out';
+          btn.type = "button";
+          btn.setAttribute('disabled','disabled') 
+        };
+      })
+    }
+
+  })
+}) 

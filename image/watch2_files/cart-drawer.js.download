@@ -1,0 +1,119 @@
+/** Shopify CDN: Minification failed
+
+Line 15:0 Transforming class syntax to the configured target environment ("es5") is not supported yet
+Line 16:13 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 30:20 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 46:6 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 47:4 Transforming const to the configured target environment ("es5") is not supported yet
+Line 52:4 Transforming const to the configured target environment ("es5") is not supported yet
+Line 56:16 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 77:21 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 111:21 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 111:37 Transforming default arguments to the configured target environment ("es5") is not supported yet
+
+**/
+class MiniCart extends HTMLElement {
+  constructor() {
+    super();
+    this.header = document.querySelector('sticky-header');
+    this.drawer = document.querySelector('cart-drawer');
+    new IntersectionObserver(this.handleIntersection.bind(this)).observe(this);
+    // this.querySelectorAll('.quantity__button').forEach(btn => {
+    //   btn.addEventListener('click', (e) => {
+    //     const line = e.currentTarget.closest(''),
+    //           qnt = e.currentTarget.closest('.quantity__input').value;
+    //     updateQuantity(line, qnt)
+    //   })
+    // })
+  }
+
+  handleIntersection(entries, observer) {
+    if (!entries[0].isIntersecting) return;
+    observer.unobserve(this);
+    fetch(this.dataset.url)
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('mini-cart').innerHTML =
+          this.getSectionInnerHTML(html, '.shopify-section');
+          
+          document.dispatchEvent(new CustomEvent('cartdrawer:opened'));
+      })
+      .catch(e => {
+        console.error(e);
+      });
+  }
+
+  open() {
+    const detailsElement = this.drawer.querySelector('details');
+    if (detailsElement.hasAttribute('open')) {
+      return;
+    }
+    
+    const summaryElement = this.drawer.querySelector('summary');
+    summaryElement.click();
+  }
+
+  renderContents(parsedState) {
+    this.productId = parsedState.id;
+    this.getSectionsToRender().forEach((section => {
+      if (document.getElementById(section.id)) {
+        document.getElementById(section.id).innerHTML =
+          this.getSectionInnerHTML(parsedState.sections[section.id], section.selector);
+      }
+    }));
+
+    if (this.header && !this.header.sticky()) {
+      window.scrollBy(0, -1);
+
+      setTimeout(() => {
+        this.open();
+      }, 250);
+    }
+    else {
+      this.open();
+    }
+  }
+
+  getSectionsToRender() {
+    return [
+      {
+        id: 'mini-cart',
+        section: 'mini-cart',
+        selector: '.shopify-section'
+      },
+      {
+        id: 'cart-icon-bubble',
+        section: 'cart-icon-bubble',
+        selector: '.shopify-section'
+      },
+      {
+        id: 'mobile-cart-icon-bubble',
+        section: 'mobile-cart-icon-bubble',
+        selector: '.shopify-section'
+      }
+    ];
+  }
+
+  // updateQuantity(line, qnt) {
+  //   fetch('/cart/update.js',
+  //     {
+  //       method: 'POST',
+  //       headers: {
+  //         'Accept': 'application/json',
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify({id: line, quantity: quantity})}
+  //   )
+  //   .then(res => console.log(res))
+  //   .catch(err => console.log(err))
+  // };
+
+  getSectionInnerHTML(html, selector = '.shopify-section') {
+    return new DOMParser()
+    .parseFromString(html, 'text/html')
+    .querySelector(selector).innerHTML;
+  }
+
+}
+
+customElements.define('mini-cart', MiniCart);

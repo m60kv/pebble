@@ -1,0 +1,98 @@
+/** Shopify CDN: Minification failed
+
+Line 16:0 Transforming class syntax to the configured target environment ("es5") is not supported yet
+Line 17:13 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 25:19 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 32:22 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 36:8 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 40:7 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 44:14 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 45:4 Transforming let to the configured target environment ("es5") is not supported yet
+Line 52:10 Transforming object literal extensions to the configured target environment ("es5") is not supported yet
+Line 53:4 Transforming const to the configured target environment ("es5") is not supported yet
+... and 9 more hidden warnings
+
+**/
+class floatingCart extends HTMLElement {
+  constructor() {
+    super();
+    this.revealFloatingCart();
+    this.onVariantChange();
+    // this.cehckBuyNowBtn();
+    document.querySelector('html').style.setProperty('--floating-cart-height',`${this.clientHeight}px`);
+  }
+
+  connectedCallback() {
+    this.onScrollHandler = this.onScroll.bind(this);
+
+    window.addEventListener('scroll', this.onScrollHandler, false);
+    this.onScrollHandler();
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('scroll', this.onScrollHandler);
+  }
+
+  reveal() {
+    this.setAttribute('animate', '');
+  }
+
+  reset() {
+    this.removeAttribute('animate');
+  }
+
+  getOffsetTop(element) {
+    let offsetTop = 0;
+    while(element) {
+      offsetTop += element.offsetTop;
+      element = element.offsetParent;
+    }
+    return offsetTop;
+  }
+  onScroll() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (scrollTop > this.getOffsetTop(this)) {
+        requestAnimationFrame(this.reveal.bind(this));
+    } else {
+        requestAnimationFrame(this.reset.bind(this));
+    }
+  }
+  reveal() {
+    this.setAttribute('animate', '');
+  }
+  reset() {
+    this.removeAttribute('animate');
+  }
+  onVariantChange = () => {
+    document.addEventListener('variant:change', (vardata) => {
+      this.querySelector('.var-title').textContent = vardata.detail.variant.title;
+      this.querySelector('.img-wrapper img').src = vardata.detail.variant.featured_image.src;
+    })
+  }
+  
+  revealFloatingCart = () => {
+    window.addEventListener('scroll', () => {
+      let crollPosition = window.pageYOffset;
+      let formEle = document.querySelector('.product-form.main-p-form');
+      let offset = (formEle.offsetTop + window.innerHeight) - 100;
+      if (crollPosition >= offset) {
+        this.classList.add('active')
+      } else {
+        this.classList.remove('active')
+      }
+    })
+  } 
+
+  cehckBuyNowBtn = () => {
+    let buyNowBtnWrapper = this.querySelector('.paymentBtnWrapper');
+    let checkBtnText = () => {
+      let buyNowBtn = this.querySelector('.shopify-payment-button__button')
+      if (buyNowBtn.textContent == 'Buy it now') buyNowBtn.textContent = 'Buy Now'
+    }
+    let btnObserver = new MutationObserver(checkBtnText);
+    btnObserver.observe(buyNowBtnWrapper, {characterDataOldValue: true, childList: true, subtree: true})
+  }
+
+}
+customElements.define('floating-cart',floatingCart)

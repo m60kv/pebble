@@ -1,0 +1,136 @@
+*{
+    margin: 0;
+    padding: 0;
+        font-family: Quicksand, sans-serif ;
+
+}
+* img
+{
+    transition: transform .2s;
+}
+* img:hover{
+    transform: scale(1.05);
+}
+
+.nav-bar{
+    font-family: Quicksand, sans-serif ;
+    display: flex;
+    height:70px;
+
+}
+.nav-bar-left{
+    flex-grow: .05;
+    height: 100%;
+}
+.nav-bar-left img{
+    width: 60%;
+    height:60%;
+    padding-left: 70px;
+    padding-top: 15px;
+    
+}
+.nav-bar-center{
+    flex-grow: 1;
+    height: 100%;
+
+}
+
+.navitem ul{
+    display: flex;
+    list-style: none;
+    justify-content: center;
+    margin-top: 27px;
+
+}
+.navitem ul li{
+    
+    display: flex;
+    padding-left: 30px;
+    font-size: 11px;
+}
+.navitem ul li a{
+    position: relative;
+    color: rgb(0, 45, 70);
+    text-decoration: none;
+    padding: 0px 10px;
+    font-weight:600;
+} 
+
+.navitem ul li a:after{
+    content: "";
+    position: absolute;
+    background-color: rgb(0, 0, 0);
+    height: 1px;
+   width: 0;
+   left: 3px; 
+   bottom: -4px;
+   transition: .5s;
+   
+}
+.navitem ul li a:hover::after{
+    width: 100%;
+}
+.nav-bar-right{
+    flex-grow: 1.6;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    
+}
+.nav-bar-right1{
+       align-self: center;
+    justify-content: center;
+    align-items: center;
+} 
+.nav-bar-right1 img{
+
+    width: 20px;
+    height: 20px;
+} 
+.watch{
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1;
+    position: absolute;
+    width: 250px;
+    height: 300px;
+    margin-left: 5px;
+    margin-top: 20px;
+
+}                                                                                                                                                                   
+.watch-item{
+    background-color:rgb(250, 250, 250);
+    padding: 20px 20px;
+
+}
+.watch-item p{
+    font-family: Quicksand, sans-serif ;
+    padding-top: 10px;
+    font-size: 14px;
+    font-weight:700;
+    color: rgb(0, 45, 70);
+}
+.navitem li:hover .watch{
+    opacity: 1;
+    visibility: visible;
+}
+.watch-item .nextto{
+    position: absolute;
+    height: 50px;
+    width: 50px;
+    background-color: brown;
+}
+.watch-sub{
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    width: 150px;
+    top: 20px;
+    margin-left: 150px;
+    background-color: rgb(244, 244, 244);
+    padding: 10px 10px;
+}
+.watch-item p:hover + .watch-sub{
+    opacity: 1;
+    visibility: visible;
+}
